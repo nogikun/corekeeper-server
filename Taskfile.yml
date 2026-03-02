@@ -1,0 +1,12 @@
+version: "3"
+
+tasks:
+  # =============================================================================
+  # 初期化 — 開発環境セットアップ
+  # =============================================================================
+  init:
+    desc: Install environment
+    cmds:
+      - git config --local commit.template .commit-template
+      # - pipx install pre-commit
+      # - pre-commit install
