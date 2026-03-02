@@ -1,0 +1,3 @@
+[submodule "core-keeper-dedicated"]
+	path = core-keeper-dedicated
+	url = https://github.com/escapingnetwork/core-keeper-dedicated.git

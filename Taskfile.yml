@@ -2,11 +2,65 @@ version: "3"
 
 tasks:
   # =============================================================================
+  # ヘルプ
+  # =============================================================================
+  # 引数なしで `task` を実行したときに、カスタム順のリストを表示する
+  default:
+    silent: true
+    cmds:
+      - task --list-all --sort none
+  # =============================================================================
   # 初期化 — 開発環境セットアップ
   # =============================================================================
   init:
-    desc: Install environment
+    desc: 🛠️ 開発環境をセットアップする
     cmds:
       - git config --local commit.template .commit-template
-      # - pipx install pre-commit
-      # - pre-commit install
+      - pipx install pre-commit
+      - pre-commit install
+  # =============================================================================
+  # submodule内のファイルをserverにコピー
+  # =============================================================================
+  sync:
+    desc: 🔄 Dockerfileを同期する
+    cmds:
+      - mkdir -p ./server
+      - cp ./core-keeper-dedicated/Dockerfile ./server/Dockerfile
+      - cp ./core-keeper-dedicated/docker-compose-example/docker-compose.yml ./server/docker-compose.yml
+      - cp -r ./core-keeper-dedicated/scripts ./server/scripts
+  submodule:update:
+    desc: 📦 サブモジュールを更新する
+    cmds:
+      - git submodule update --remote
+
+  # =============================================================================
+  # Dockerfileからイメージをビルド
+  # =============================================================================
+  build:
+    desc: 🐳 ローカルのDockerfileからサーバーイメージをビルドする
+    dir: ./server
+    cmds:
+      - docker build -t escaping/core-keeper-dedicated:latest .
+
+  # =============================================================================
+  # dockerfile から実行
+  # =============================================================================
+  run:
+    desc: 🚀 Core Keeperサーバーを起動する
+    cmds:
+      - task: build
+      - cmd: docker rm -f core-keeper-dedicated
+        ignore_error: true
+      - docker run --name core-keeper-dedicated escaping/core-keeper-dedicated:latest
+
+  # =============================================================================
+  # docker composeでサーバーを起動
+  # =============================================================================
+  run:compose:
+    desc: 🚀 Core Keeperサーバーを起動する
+    deps: [build]
+    dir: ./server
+    cmds:
+      - docker compose up
+
+  # =============================================================================
