@@ -1,4 +1,7 @@
 # Core Keeper Dedicated Server
+Forked from [escapingnetwork/core-keeper-dedicated](https://github.com/escapingnetwork/core-keeper-dedicated)
+
+![corekeeper](https://user-images.githubusercontent.com/136487/168213246-7f561105-136e-47fa-abd9-fac1c97ca48d.png)
 
 Core Keeperの専用サーバーを構築するためのリポジトリです。
 
