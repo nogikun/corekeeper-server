@@ -37,18 +37,32 @@ source "${SCRIPTSDIR}/compile-parameters.sh"
 mkdir -p "${STEAMAPPDIR}/logs"
 touch "$logfile"
 
-# Start Xvfb
-Xvfb :99 -screen 0 1x1x24 -nolisten tcp &
-xvfbpid=$!
+# OSとアーキテクチャを uname で取得し、クロスプラットフォーム対応にする
+os=$(uname -s)
+architecture=$(uname -m)
 
-# Get the architecture using dpkg
-architecture=$(dpkg --print-architecture)
+# Linux の場合のみ Xvfb (仮想ディスプレイ) を起動する
+if [ "$os" = "Linux" ]; then
+    Xvfb :99 -screen 0 1x1x24 -nolisten tcp &
+    xvfbpid=$!
+    export DISPLAY=:99
+fi
 
-# Start Core Keeper Server
-if [ "$architecture" == "arm64" ]; then
-    DISPLAY=:99 LD_LIBRARY_PATH="${STEAMCMDDIR}/linux64:/usr/lib:${LD_LIBRARY_PATH#:}" /usr/local/bin/box64 ./CoreKeeperServer "${params[@]}" &
+# OSやアーキテクチャに応じて CoreKeeperServer の起動方法を切り替える
+if [ "$os" = "Linux" ]; then
+    if [ "$architecture" = "aarch64" ] || [ "$architecture" = "arm64" ]; then
+        # Linux ARM64 の場合 (box64 エミュレータが必要)
+        LD_LIBRARY_PATH="${STEAMCMDDIR}/linux64:/usr/lib:${LD_LIBRARY_PATH#:}" /usr/local/bin/box64 ./CoreKeeperServer "${params[@]}" &
+    else
+        # Linux x86_64 の場合
+        LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${STEAMCMDDIR}/linux64/" ./CoreKeeperServer "${params[@]}" &
+    fi
+elif [ "$os" = "Darwin" ]; then
+    # macOS の場合 (Apple Silicon は必要に応じてネイティブの Rosetta 2 で x86_64 エミュレーションを実行)
+    ./CoreKeeperServer "${params[@]}" &
 else
-    DISPLAY=:99 LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${STEAMCMDDIR}/linux64/" ./CoreKeeperServer "${params[@]}" &
+    # Windows (Git Bash/MSYS2 などの環境)
+    ./CoreKeeperServer.exe "${params[@]}" &
 fi
 ckpid=$!
 

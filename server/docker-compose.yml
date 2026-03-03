@@ -8,8 +8,8 @@ services:
     # ports:
     #   - "$SERVER_PORT:$SERVER_PORT/udp"
     volumes:
-      - /host/path/to/server-files:/home/steam/core-keeper-dedicated
-      - /host/path/to/server-data:/home/steam/core-keeper-data
+      - ./server-files:/home/steam/core-keeper-dedicated
+      - ./server-data:/home/steam/core-keeper-data
     env_file:
       - path: core.env
         required: false

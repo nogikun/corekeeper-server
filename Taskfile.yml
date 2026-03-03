@@ -28,9 +28,14 @@ tasks:
       - cp ./core-keeper-dedicated/Dockerfile ./server/Dockerfile
       - cp ./core-keeper-dedicated/docker-compose-example/docker-compose.yml ./server/docker-compose.yml
       - cp -r ./core-keeper-dedicated/scripts ./server/scripts
+
+  # =============================================================================
+  # submoduleを更新
+  # =============================================================================
   submodule:update:
     desc: 📦 サブモジュールを更新する
     cmds:
+      - git submodule init
       - git submodule update --remote
 
   # =============================================================================
