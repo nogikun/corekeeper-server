@@ -32,19 +32,24 @@ params=(
     "-logfile" "$logfile"
 )
 
-add_param "-world"              "${WORLD_INDEX}"
-add_param "-worldname"          "${WORLD_NAME}"
-add_param "-worldseed"          "${WORLD_SEED}"
-add_param "-worldmode"          "${WORLD_MODE}"
-add_param "-hashedworldseed"    "${HASHED_WORLD_SEED}"
-add_param "-gameid"             "${GAME_ID}"
+CONFIG_PATH="${DATA_PATH:-${STEAMAPPDATADIR}}/ServerConfig.json"
+
+if [ ! -f "$CONFIG_PATH" ]; then
+    add_param "-world"              "${WORLD_INDEX}"
+    add_param "-worldname"          "${WORLD_NAME}"
+    add_param "-worldseed"          "${WORLD_SEED}"
+    add_param "-worldmode"          "${WORLD_MODE}"
+    add_param "-hashedworldseed"    "${HASHED_WORLD_SEED}"
+    add_param "-gameid"             "${GAME_ID}"
+    add_param "-maxplayers"         "${MAX_PLAYERS}"
+    add_param "-season"             "${SEASON}"
+    add_param "-password"           "${PASSWORD}"
+fi
+
 add_param "-datapath"           "${DATA_PATH:-${STEAMAPPDATADIR}}"
-add_param "-maxplayers"         "${MAX_PLAYERS}"
-add_param "-season"             "${SEASON}"
 add_param "-ip"                 "${SERVER_IP}"
 add_param "-port"               "${SERVER_PORT}"
 add_param "-activatecontent"    "${ACTIVATE_CONTENT}"
-add_param "-password"           "${PASSWORD}"
 add_param "-allowonlyplatform"  "${ALLOW_ONLY_PLATFORM}"
 
 add_flag "-activateallcontent"  "${ACTIVATE_ALL_CONTENT}"
