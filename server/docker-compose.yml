@@ -5,8 +5,8 @@ services:
     restart: unless-stopped
     stop_grace_period: 2m
     # Port is only needed if using direct connection mode
-    # ports:
-    #   - "$SERVER_PORT:$SERVER_PORT/udp"
+    ports:
+      - "27015:27015/udp"
     volumes:
       - ./server-files:/home/steam/core-keeper-dedicated
       - ./server-data:/home/steam/core-keeper-data
