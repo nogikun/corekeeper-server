@@ -69,3 +69,29 @@ task --version
 task sync
 task run
 ```
+
+---
+
+## 🖥️ Proxmox VE (LXC) へのインストール
+
+Proxmox VE ホストのシェルで以下を実行すると、Debian 12 の LXC を作成し、`server/` の Dockerfile / docker-compose.yml をそのまま使ってサーバーを起動します。
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/nogikun/corekeeper-server/main/proxmox-install.sh)"
+```
+
+CT ID やストレージなどは環境変数で変更できます（`CTID` `CT_HOSTNAME` `STORAGE` `TEMPLATE_STORAGE` `BRIDGE` `DISK` `CORES` `MEMORY`）。
+```bash
+CTID=200 STORAGE=local-zfs MEMORY=8192 bash -c "$(curl -fsSL https://raw.githubusercontent.com/nogikun/corekeeper-server/main/proxmox-install.sh)"
+```
+
+- 接続用の Game ID: `pct exec <CTID> -- cat /opt/corekeeper-server/server/server-files/GameID.txt`
+- 設定変更: CT 内の `/opt/corekeeper-server/server/core.env` を編集し `docker compose up -d`
+- ゲーム本体の更新: `pct exec <CTID> -- docker restart core-keeper-dedicated`（起動時に自動更新されます）
+- リポジトリ更新の反映:
+  ```bash
+  pct exec <CTID> -- bash -c 'cd /opt/corekeeper-server && git pull && cd server && docker build -t escaping/core-keeper-dedicated:latest . && docker compose up -d'
+  ```
+
+> [!WARNING]
+> リポジトリは Public 前提です。`server/core.env` に `PASSWORD` や `DISCORD_WEBHOOK_URL` を書いてコミットしないでください（CT 内でのみ編集してください）。
